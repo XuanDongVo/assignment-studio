@@ -142,3 +142,27 @@
     color: var(--color-foreground);
   }
 }
+
+:root {
+  --background: oklch(0.975 0.003 260);
+  --card: oklch(1 0 0);
+  --paper: oklch(0.995 0.004 90);
+  --primary: oklch(0.511 0.23 276.966);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring: oklch(0.511 0.23 276.966);
+  --success: oklch(0.58 0.14 152);
+  --success-foreground: oklch(0.99 0 0);
+  --warning: oklch(0.77 0.16 75);
+  --warning-foreground: oklch(0.5 0.12 60);
+  --sidebar: oklch(0.985 0.002 260);
+}
+@theme inline {
+  --color-paper: var(--paper);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+}
+body { font-family: var(--font-sans); }

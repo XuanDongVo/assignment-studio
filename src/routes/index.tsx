@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AssignmentBuilder } from "@/builder/components/AssignmentBuilder";
 
 export const Route = createFileRoute("/")({
-  validateSearch: (s: Record<string, unknown>): { id?: string } => (typeof s.id === "string" ? { id: s.id } : {}),
+  validateSearch: (s: Record<string, unknown>): { id?: string } => (typeof s["id"] === "string" ? { id: s["id"] as string } : {}),
   head: () => ({
     meta: [
       { title: "Assignment Builder · English Grades 6–8" },
@@ -18,5 +18,5 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { id } = Route.useSearch();
-  return <AssignmentBuilder id={id} />;
+  return <AssignmentBuilder {...(id ? { id } : {})} />;
 }

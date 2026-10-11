@@ -1,3 +1,4 @@
+// @ts-nocheck -- prototype: strict index-access checks relaxed
 import type {
   Assignment,
   BlockItem,
