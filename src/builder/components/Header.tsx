@@ -1,6 +1,6 @@
 // @ts-nocheck -- prototype: strict index-access checks relaxed
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Copy, Eye, Loader2, MoreHorizontal, PencilLine, Save, Settings, Trash2 } from "lucide-react";
+import { ArrowLeft, Copy, Eye, Loader2, MoreHorizontal, PencilLine, Save, Settings, HelpCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,7 @@ import { uid } from "../ops";
 import { localRepository } from "../save-service";
 import { useBuilder, useIsDirty } from "../store";
 import { useIssues } from "./Canvas";
+import { openTour } from "./Tour";
 
 export function StatusBadge() {
   const dirty = useIsDirty();
@@ -86,7 +87,7 @@ export function Header() {
     });
 
   return (
-    <header className="grid h-14 shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b bg-card px-3">
+    <header data-tour="header" className="grid h-14 shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b bg-card px-3">
       <div className="flex min-w-0 items-center gap-2">
         <Button variant="ghost" size="icon" aria-label="Back to assignments" onClick={onBack}><ArrowLeft className="h-4 w-4" /></Button>
         <input
@@ -108,6 +109,7 @@ export function Header() {
             <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Student </span>Preview
           </button>
         </div>
+        <Button variant="ghost" size="sm" onClick={openTour} title="Hướng dẫn sử dụng"><HelpCircle className="h-4 w-4" /> <span className="hidden lg:inline">Hướng dẫn</span></Button>
         <Button variant="ghost" size="icon" aria-label="Settings" onClick={() => set({ settingsOpen: true })}><Settings className="h-4 w-4" /></Button>
         <Button size="sm" onClick={() => save()} disabled={status === "saving"} title="Save draft (Ctrl+S)">
           <Save className="h-4 w-4" /> Save Draft

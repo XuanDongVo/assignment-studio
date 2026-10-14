@@ -13,6 +13,7 @@ import { Header } from "./Header";
 import { Outline } from "./Outline";
 import { PropertyPanel } from "./PropertyPanel";
 import { SettingsSheet } from "./SettingsSheet";
+import { Tour } from "./Tour";
 import { StudentPreview } from "./StudentPreview";
 import { TOOLS, Toolbox } from "./Toolbox";
 import { ValidationPanel } from "./ValidationPanel";
@@ -152,7 +153,7 @@ export function AssignmentBuilder({ id }: { id?: string }) {
           <div className="min-h-0 flex-1"><StudentPreview /></div>
         ) : (
           <div className="flex min-h-0 flex-1">
-            {wide && <aside className="w-72 shrink-0 border-r bg-sidebar"><LeftPanel /></aside>}
+            {wide && <aside data-tour="toolbox" className="w-72 shrink-0 border-r bg-sidebar"><LeftPanel /></aside>}
             <main className="flex min-w-0 flex-1 flex-col">
               {!wide && (
                 <div className="flex items-center justify-between border-b bg-card px-3 py-1.5">
@@ -160,10 +161,10 @@ export function AssignmentBuilder({ id }: { id?: string }) {
                   <Button variant="ghost" size="sm" onClick={() => setRightOpen(true)}><PanelRight className="h-4 w-4" /> Properties</Button>
                 </div>
               )}
-              <div className="min-h-0 flex-1 overflow-y-auto"><Canvas /></div>
-              <ValidationPanel />
+              <div data-tour="canvas" className="min-h-0 flex-1 overflow-y-auto"><Canvas /></div>
+              <div data-tour="validation"><ValidationPanel /></div>
             </main>
-            {wide && <aside className="w-80 shrink-0 overflow-y-auto border-l bg-card"><PropertyPanel /></aside>}
+            {wide && <aside data-tour="properties" className="w-80 shrink-0 overflow-y-auto border-l bg-card"><PropertyPanel /></aside>}
           </div>
         )}
       </div>
@@ -186,6 +187,7 @@ export function AssignmentBuilder({ id }: { id?: string }) {
       <DragOverlay>{dragLabel ? <div className="rounded-md border bg-card px-3 py-2 text-sm font-medium shadow-lg">+ {dragLabel}</div> : null}</DragOverlay>
       <SettingsSheet />
       <ConfirmHost />
+      <Tour />
     </DndContext>
   );
 }
