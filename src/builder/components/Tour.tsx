@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import * as ops from "../ops";
 import { useBuilder } from "../store";
 
 const SEEN_KEY = "ab.tour.seen.v1";
