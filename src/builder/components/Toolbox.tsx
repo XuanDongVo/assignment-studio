@@ -59,7 +59,7 @@ export function Toolbox() {
     <div className="space-y-4 p-3">
       <p className="px-1 text-xs text-muted-foreground">Click to add after the selected item, or drag onto the page.</p>
       {groups.map((g) => (
-        <div key={g}>
+        <div key={g} data-tour={g === "Structure" ? "toolbox-structure" : g === "Shared content" ? "toolbox-shared" : undefined}>
           <div className="mb-1 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{g}</div>
           <div className="space-y-0.5">
             {TOOLS.filter((t) => t.group === g).map((t) => (
