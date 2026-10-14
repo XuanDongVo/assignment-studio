@@ -13,8 +13,8 @@ const STEPS: Step[] = [
   { target: "toolbox-shared", title: "3. Nội dung dùng chung (Shared content)", body: "Reading Passage, Answer Pool, Image, Instructions là các khối dùng chung: một khối sở hữu nhiều câu hỏi con, không cần tạo lại cho từng câu. Ví dụ: bài đọc có chỗ trống {{1}}, {{2}}… mỗi chỗ trống là một câu hỏi; Answer Pool A–H dùng cho nhiều câu nối (Matching). Xóa khối sẽ được hỏi 'xóa cả câu hỏi con' hay 'tách nhóm'." },
   { target: "toolbox", title: "4. Kéo – thả hoặc click", body: "Nhấn giữ một thẻ rồi kéo vào trang giữa: thả vào Section để thêm cuối Section, thả lên khung bài đọc / pool để thành câu hỏi của nhóm đó (khối dùng chung di chuyển cả nhóm như một khối). Hoặc chọn một câu rồi click thẻ: mục mới chèn ngay sau câu đang chọn." },
   { target: "canvas", title: "5. Trang soạn đề", body: "Mỗi câu có tay cầm kéo, mũi tên ↑↓, menu Duplicate / Delete / Add before–after. Số thứ tự 'Câu n' tự đánh. Click chip {{1}} trong bài đọc để mở câu tương ứng, hoặc bấm 'Create questions for all blanks' để tạo câu cho mọi chỗ trống." },
-  { target: "properties", title: "5. Cột thuộc tính", body: "Click bất kỳ Section, câu hỏi hay khối nào để sửa ở đây: đề bài, đáp án đúng, điểm, câu mẫu (Example), gắn / tách khỏi nhóm." },
-  { target: "validation", title: "6. Kiểm tra lỗi", body: "Lỗi và cảnh báo cập nhật trực tiếp, bấm 'Go to item' để tới chỗ cần sửa. Có thể lưu nháp khi còn lỗi; chỉ 'Ready to publish' khi không còn lỗi. Tab Outline (cột trái) cho xem cấu trúc dạng cây." },
+  { target: "properties", title: "6. Cột thuộc tính", body: "Click bất kỳ Section, câu hỏi hay khối nào để sửa ở đây: đề bài, đáp án đúng, điểm, câu mẫu (Example), gắn / tách câu hỏi khỏi nhóm dùng chung." },
+  { target: "validation", title: "7. Kiểm tra lỗi", body: "Lỗi và cảnh báo cập nhật trực tiếp, bấm 'Go to item' để tới chỗ cần sửa. Có thể lưu nháp khi còn lỗi; chỉ 'Ready to publish' khi không còn lỗi. Tab Outline (cột trái) cho xem cấu trúc dạng cây." },
 ];
 
 export function Tour() {
