@@ -33,7 +33,7 @@ export function Tour() {
   useLayoutEffect(() => {
     if (step === null) return;
     const measure = () => {
-      const el = document.querySelector(`[data-tour="${STEPS[step].target}"]`);
+      const el = document.querySelector(`[data-tour="${STEPS[step]!.target}"]`);
       setRect(el ? el.getBoundingClientRect() : null);
     };
     measure();
@@ -53,7 +53,7 @@ export function Tour() {
   }, [step, close]);
 
   if (step === null) return null;
-  const s = STEPS[step];
+  const s = STEPS[step]!;
   const W = 340, pad = 12, vw = window.innerWidth, vh = window.innerHeight;
   let pos: React.CSSProperties = { left: vw / 2 - W / 2, top: vh / 2 - 100 };
   if (rect) {
