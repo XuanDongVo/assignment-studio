@@ -21,9 +21,45 @@ export function Tour() {
   const [step, setStep] = useState<number | null>(null);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const setB = useBuilder((s: any) => s.set);
+  const demoIds = useRef<{ kind: "item" | "section"; id: string }[]>([]);
+
+  const cleanupDemo = useCallback(() => {
+    const st = useBuilder.getState() as any;
+    const ids = demoIds.current.splice(0).reverse();
+    if (!ids.length) return;
+    st.mutate((d: any) => {
+      for (const x of ids) {
+        if (x.kind === "section") { if (d.sections.some((s: any) => s.id === x.id)) ops.removeSection(d, x.id); }
+        else if (d.items[x.id]) ops.removeItem(d, x.id, true);
+      }
+    });
+    st.select(null);
+  }, []);
 
   const start = useCallback(() => { setB?.({ mode: "edit" }); setStep(0); }, [setB]);
-  const close = useCallback(() => { setStep(null); localStorage.setItem(SEEN_KEY, "1"); }, []);
+  const close = useCallback(() => { cleanupDemo(); setStep(null); localStorage.setItem(SEEN_KEY, "1"); }, [cleanupDemo]);
+
+  // Live demo: step 2 adds a sample Section, step 3 adds a sample Reading Passage
+  useEffect(() => {
+    if (step === null) return;
+    cleanupDemo();
+    const demo = step === 1 ? "SECTION" : step === 2 ? "PASSAGE" : null;
+    if (!demo) return;
+    const st = useBuilder.getState() as any;
+    st.addTool(demo);
+    const sel = useBuilder.getState().selection as any;
+    if (sel) demoIds.current.push({ kind: sel.kind, id: sel.id });
+    if (demo === "PASSAGE") {
+      st.mutate((d: any) => {
+        const b = d.items[sel.id];
+        if (b?.block.type === "PASSAGE") {
+          b.block.title = "My School (mẫu)";
+          b.block.text = "This is my school. It has {{1}} floors and a big {{2}}. We study English in room {{3}}.";
+        }
+      });
+    }
+    return cleanupDemo;
+  }, [step, cleanupDemo]);
 
   useEffect(() => {
     window.addEventListener("ab:tour", start);
@@ -35,11 +71,12 @@ export function Tour() {
     if (step === null) return;
     const measure = () => {
       const el = document.querySelector(`[data-tour="${STEPS[step]!.target}"]`);
+      if (el) el.scrollIntoView({ block: "nearest" });
       setRect(el ? el.getBoundingClientRect() : null);
     };
-    measure();
+    const t = setTimeout(measure, 150);
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    return () => { clearTimeout(t); window.removeEventListener("resize", measure); };
   }, [step]);
 
   useEffect(() => {
