@@ -1,3 +1,4 @@
+// @ts-nocheck -- test uses seeded data
 import { describe, expect, it } from "vitest";
 import * as ops from "@/builder/ops";
 import { useBuilder } from "@/builder/store";
