@@ -152,7 +152,50 @@ function ItemShell({ id, children, label }: { id: ID; children: ReactNode; label
   );
 }
 
+function InlineEditor({ q }: { q: QuestionItem }) {
+  const mutate = useBuilder((s) => s.mutate);
+  const c = q.content;
+  const edit = (fn: (c: any) => void) => mutate((d) => fn((d.items[q.id] as QuestionItem).content));
+  const input = "w-full rounded border bg-background px-2 py-1 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+  return (
+    <div className="space-y-2 font-sans" onClick={(e) => e.stopPropagation()}>
+      <span className="text-xs font-semibold text-primary">Sửa trực tiếp · {ops.TYPE_LABEL[c.type]}</span>
+      {!c.blankRef && (
+        <textarea autoFocus rows={2} className={input} placeholder="Nhập đề bài… ([[ea]] = gạch chân, {{1}} = chỗ trống)" value={c.prompt} onChange={(e) => edit((x) => (x.prompt = e.target.value))} />
+      )}
+      {(c.type === "SINGLE_CHOICE" || c.type === "MULTIPLE_CHOICE") && (
+        <div className="space-y-1">
+          {c.options.map((o, i) => (
+            <div key={o.id} className="flex items-center gap-2">
+              <input
+                type={c.type === "SINGLE_CHOICE" ? "radio" : "checkbox"}
+                checked={o.isCorrect}
+                aria-label={`Đáp án đúng ${ops.letter(i)}`}
+                onChange={() => edit((x) => x.options.forEach((p, j) => (c.type === "SINGLE_CHOICE" ? (p.isCorrect = j === i) : j === i && (p.isCorrect = !p.isCorrect))))}
+              />
+              <span className="w-4 text-xs text-muted-foreground">{ops.letter(i)}.</span>
+              <input className={input} value={o.text} placeholder="Lựa chọn…" onChange={(e) => edit((x) => (x.options[i].text = e.target.value))} />
+              <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" aria-label="Xóa lựa chọn" onClick={() => edit((x) => x.options.splice(i, 1))}><Trash2 className="h-3.5 w-3.5" /></Button>
+            </div>
+          ))}
+          <Button size="sm" variant="ghost" onClick={() => edit((x) => x.options.push({ id: ops.uid("o"), text: "", isCorrect: false }))}><Plus className="h-3.5 w-3.5" /> Thêm lựa chọn</Button>
+        </div>
+      )}
+      {c.type === "TEXT_INPUT" && (
+        <input className={input} placeholder="Đáp án chấp nhận, cách nhau bằng dấu /" value={c.acceptedAnswers.join(" / ")} onChange={(e) => edit((x) => (x.acceptedAnswers = e.target.value.split("/").map((s) => s.trim())))} />
+      )}
+      <p className="text-[11px] text-muted-foreground">Điểm, chế độ chấm, nhóm… ở cột cài đặt nâng cao bên phải.</p>
+    </div>
+  );
+}
+
 function QuestionBody({ q }: { q: QuestionItem }) {
+  const selected = useBuilder((s) => s.selection?.kind === "item" && s.selection.id === q.id);
+  if (selected && ["SINGLE_CHOICE", "MULTIPLE_CHOICE", "TEXT_INPUT"].includes(q.content.type)) return <InlineEditor q={q} />;
+  return <QuestionView q={q} />;
+}
+
+function QuestionView({ q }: { q: QuestionItem }) {
   const { numbers, total } = useNumbering();
   const a = useBuilder((s) => s.assignment);
   const c = q.content;
