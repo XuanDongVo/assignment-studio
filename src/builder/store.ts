@@ -99,7 +99,7 @@ export const useBuilder = create<BuilderState>((set, get) => ({
     const n = Math.max(1, Math.min(50, Math.floor(count || 1)));
     const items = Array.from({ length: n }, () => ops.createItem(tool));
     get().mutate((d) => {
-      let t = target ?? ops.targetFromSelection(d, selection, items[0].kind === "block");
+      let t = target ?? ops.targetFromSelection(d, selection, items[0]!.kind === "block");
       if (!t) {
         const s = ops.newSection();
         d.sections.push(s);
@@ -110,7 +110,7 @@ export const useBuilder = create<BuilderState>((set, get) => ({
         ops.place(d, item.id, { ...t!, index: t!.index + i });
       });
     });
-    const first = items[0];
+    const first = items[0]!;
     set({ selection: { kind: "item", id: first.id } });
     if (n > 1) toast.success(`Added ${n} questions`);
     setTimeout(() => document.getElementById(`item-${first.id}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 50);
