@@ -23,6 +23,7 @@ import type { BlockItem, ID, QuestionItem, Section, ToolKey } from "../types";
 import { validate } from "../validation";
 import { BlankChip, RichText } from "./RichText";
 import { TOOLS } from "./Toolbox";
+import { BatchAdd } from "./BatchAdd";
 
 const QUESTION_TOOL_DEFS = TOOLS.filter((t) => ops.isQuestionTool(t.key));
 
@@ -358,6 +359,12 @@ function SectionView({ s, index }: { s: Section; index: number }) {
             </button>
           </div>
         )}
+        <div className="flex justify-center gap-2 font-sans opacity-70 hover:opacity-100">
+          <Button size="sm" variant="ghost" onClick={(e) => (e.stopPropagation(), addTool("SINGLE_CHOICE", { sectionId: s.id, groupId: null, index: s.itemIds.length }))}>
+            <Plus className="h-4 w-4" /> Add question
+          </Button>
+          <BatchAdd variant="ghost" label="Add several" target={{ sectionId: s.id, groupId: null, index: s.itemIds.length }} />
+        </div>
       </div>
     </section>
   );

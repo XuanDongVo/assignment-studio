@@ -8,11 +8,12 @@ import { useBuilder } from "../store";
 import type { InsertTarget, ToolKey } from "../types";
 import { TOOLS } from "./Toolbox";
 
-const QTOOLS = TOOLS.filter((t) => isQuestionTool(t.key));
+
 
 /** Pick a question type once, pick how many, insert them in a row. */
 export function BatchAdd({ target, label = "Add questions", variant = "outline" }: { target?: InsertTarget | null; label?: string; variant?: "outline" | "ghost" | "default" }) {
   const addTool = useBuilder((s) => s.addTool);
+  const QTOOLS = TOOLS.filter((t) => isQuestionTool(t.key));
   const [open, setOpen] = useState(false);
   const [tool, setTool] = useState<ToolKey>("SINGLE_CHOICE");
   const [count, setCount] = useState(5);

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useBuilder } from "../store";
 import type { ToolKey } from "../types";
+import { BatchAdd } from "./BatchAdd";
 
 export const TOOLS: { key: ToolKey; label: string; desc: string; icon: LucideIcon; group: string }[] = [
   { key: "SINGLE_CHOICE", label: "Single choice", desc: "One correct option (A–D)", icon: CircleDot, group: "Questions" },
@@ -57,7 +58,8 @@ export function Toolbox() {
   const groups = [...new Set(TOOLS.map((t) => t.group))];
   return (
     <div className="space-y-4 p-3">
-      <p className="px-1 text-xs text-muted-foreground">Click to add after the selected item, or drag onto the page.</p>
+      <p className="px-1 text-xs text-muted-foreground">Click to add after the selected item (or at the end of the section). Dragging is optional.</p>
+      <BatchAdd label="Add several at once" />
       {groups.map((g) => (
         <div key={g} data-tour={g === "Structure" ? "toolbox-structure" : g === "Shared content" ? "toolbox-shared" : undefined}>
           <div className="mb-1 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{g}</div>
