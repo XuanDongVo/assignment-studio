@@ -69,6 +69,7 @@ export function AssignmentBuilder({ id }: { id?: string }) {
   const selection = useBuilder((s) => s.selection);
   const dirty = useIsDirty();
   const wide = useWide();
+  const [propsCollapsed, setPropsCollapsed] = useState(false);
   const [leftOpen, setLeftOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
   const [dragLabel, setDragLabel] = useState<string | null>(null);
@@ -164,7 +165,16 @@ export function AssignmentBuilder({ id }: { id?: string }) {
               <div data-tour="canvas" className="min-h-0 flex-1 overflow-y-auto"><Canvas /></div>
               <div data-tour="validation"><ValidationPanel /></div>
             </main>
-            {wide && <aside data-tour="properties" className="w-80 shrink-0 overflow-y-auto border-l bg-card"><PropertyPanel /></aside>}
+            {wide && (propsCollapsed ? (
+              <aside data-tour="properties" className="flex w-10 shrink-0 flex-col items-center border-l bg-card pt-2">
+                <Button size="icon" variant="ghost" className="h-8 w-8" aria-label="Mở cột cài đặt nâng cao" title="Mở cài đặt nâng cao" onClick={() => setPropsCollapsed(false)}><PanelRight className="h-4 w-4" /></Button>
+              </aside>
+            ) : (
+              <aside data-tour="properties" className="relative w-80 shrink-0 overflow-y-auto border-l bg-card">
+                <Button size="icon" variant="ghost" className="absolute right-1 top-1 z-10 h-7 w-7" aria-label="Thu gọn cột cài đặt" title="Thu gọn" onClick={() => setPropsCollapsed(true)}><PanelRight className="h-4 w-4" /></Button>
+                <PropertyPanel />
+              </aside>
+            ))}
           </div>
         )}
       </div>
