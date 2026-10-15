@@ -37,7 +37,7 @@ interface BuilderState {
   select: (s: Selection) => void;
   set: (p: Partial<BuilderState>) => void;
   save: () => Promise<boolean>;
-  addTool: (tool: ToolKey, target?: InsertTarget | null) => void;
+  addTool: (tool: ToolKey, target?: InsertTarget | null, count?: number) => void;
   requestDeleteItem: (id: ID) => void;
   requestDeleteSection: (id: ID) => void;
   duplicate: (id: ID) => void;
@@ -84,7 +84,7 @@ export const useBuilder = create<BuilderState>((set, get) => ({
     }
   },
 
-  addTool: (tool, target) => {
+  addTool: (tool, target, count = 1) => {
     const { selection } = get();
     if (tool === "SECTION") {
       const s = ops.newSection();
@@ -96,19 +96,24 @@ export const useBuilder = create<BuilderState>((set, get) => ({
       set({ selection: { kind: "section", id: s.id } });
       return;
     }
-    const item = ops.createItem(tool);
+    const n = Math.max(1, Math.min(50, Math.floor(count || 1)));
+    const items = Array.from({ length: n }, () => ops.createItem(tool));
     get().mutate((d) => {
-      let t = target ?? ops.targetFromSelection(d, selection, item.kind === "block");
+      let t = target ?? ops.targetFromSelection(d, selection, items[0].kind === "block");
       if (!t) {
         const s = ops.newSection();
         d.sections.push(s);
         t = { sectionId: s.id, groupId: null, index: 0 };
       }
-      d.items[item.id] = item;
-      ops.place(d, item.id, t);
+      items.forEach((item, i) => {
+        d.items[item.id] = item;
+        ops.place(d, item.id, { ...t!, index: t!.index + i });
+      });
     });
-    set({ selection: { kind: "item", id: item.id } });
-    setTimeout(() => document.getElementById(`item-${item.id}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 50);
+    const first = items[0];
+    set({ selection: { kind: "item", id: first.id } });
+    if (n > 1) toast.success(`Added ${n} questions`);
+    setTimeout(() => document.getElementById(`item-${first.id}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 50);
   },
 
   duplicate: (id) => {

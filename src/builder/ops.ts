@@ -176,28 +176,29 @@ export function newSection(): Section {
 export function createItem(tool: ToolKey): Item {
   const id = uid(isBlockTool(tool) ? "b" : "q");
   const config = { points: 1, required: true, gradingMode: "AUTO" as const, isExample: false, groupId: null };
-  const opt = (text: string, isCorrect = false) => ({ id: uid("o"), text, isCorrect });
+  // Clean drafts: structure only — never pre-mark a correct answer or invent academic content.
+  const opt = (text = "") => ({ id: uid("o"), text, isCorrect: false });
   switch (tool) {
     case "SINGLE_CHOICE":
-      return { id, kind: "question", config, content: { type: "SINGLE_CHOICE", prompt: "", display: "list", options: [opt("Option A", true), opt("Option B"), opt("Option C"), opt("Option D")] } };
+      return { id, kind: "question", config, content: { type: "SINGLE_CHOICE", prompt: "", display: "list", options: [opt(), opt(), opt(), opt()] } };
     case "TRUE_FALSE":
-      return { id, kind: "question", config, content: { type: "SINGLE_CHOICE", prompt: "", display: "list", options: [opt("True", true), opt("False")] } };
+      return { id, kind: "question", config, content: { type: "SINGLE_CHOICE", prompt: "", display: "list", options: [opt("True"), opt("False")] } };
     case "MULTIPLE_CHOICE":
-      return { id, kind: "question", config, content: { type: "MULTIPLE_CHOICE", prompt: "", options: [opt("Option A", true), opt("Option B", true), opt("Option C"), opt("Option D")] } };
+      return { id, kind: "question", config, content: { type: "MULTIPLE_CHOICE", prompt: "", options: [opt(), opt(), opt(), opt()] } };
     case "TEXT_INPUT":
       return { id, kind: "question", config, content: { type: "TEXT_INPUT", prompt: "", acceptedAnswers: [""], caseSensitive: false } };
     case "MULTI_BLANKS":
-      return { id, kind: "question", config: { ...config, points: 2 }, content: { type: "MULTI_TEXT_INPUT", prompt: "I {{1}} to school and she {{2}} by bus.", caseSensitive: false, blanks: [{ id: uid("bl"), acceptedAnswers: ["walk"] }, { id: uid("bl"), acceptedAnswers: ["goes"] }] } };
+      return { id, kind: "question", config, content: { type: "MULTI_TEXT_INPUT", prompt: "", caseSensitive: false, blanks: [] } };
     case "MATCHING":
       return { id, kind: "question", config, content: { type: "MATCHING", prompt: "", poolId: null, correctEntryId: null } };
     case "INSTRUCTIONS":
-      return { id, kind: "block", memberIds: [], block: { type: "INSTRUCTIONS", text: "Read the instructions carefully." } };
+      return { id, kind: "block", memberIds: [], block: { type: "INSTRUCTIONS", text: "" } };
     case "PASSAGE":
-      return { id, kind: "block", memberIds: [], block: { type: "PASSAGE", title: "New passage", text: "Type the passage here. Use {{1}} for blanks." } };
+      return { id, kind: "block", memberIds: [], block: { type: "PASSAGE", title: "", text: "" } };
     case "MEDIA":
       return { id, kind: "block", memberIds: [], block: { type: "MEDIA", url: "", alt: "", caption: "" } };
     case "POOL":
-      return { id, kind: "block", memberIds: [], block: { type: "POOL", title: "Answer pool", entries: [{ id: uid("e"), text: "First answer" }, { id: uid("e"), text: "Second answer" }] } };
+      return { id, kind: "block", memberIds: [], block: { type: "POOL", title: "", entries: [{ id: uid("e"), text: "" }, { id: uid("e"), text: "" }] } };
     case "SECTION":
       throw new Error("Section is not an item");
   }
