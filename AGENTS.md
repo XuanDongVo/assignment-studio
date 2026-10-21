@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Showcase content lives in `src/builder/demo.ts` (deterministic ids) and is added to local storage once by the save service; `src/test/demo.test.ts` keeps it covering every question type and shared block with zero validation errors — update both when adding a new type.
