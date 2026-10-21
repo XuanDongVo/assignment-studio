@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, Plus } from "lucide-react";
+import { FileText, Plus, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { computeNumbering, uid } from "@/builder/ops";
-import { localRepository } from "@/builder/save-service";
+import { localRepository, resetDemo } from "@/builder/save-service";
 import { createSeed } from "@/builder/seed";
 import type { Assignment } from "@/builder/types";
 
@@ -32,12 +32,21 @@ function AssignmentsPage() {
     await localRepository.save(a);
     navigate({ to: "/", search: { id: a.id } });
   };
+  const openDemo = async () => {
+    const id = await resetDemo();
+    navigate({ to: "/", search: { id } });
+  };
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-6 py-10">
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-2xl font-semibold">My assignments</h1>
-          <Button onClick={createNew}><Plus className="h-4 w-4" /> New assignment</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={openDemo} title="Opens a fresh copy of the demo with every question type and shared block">
+              <Sparkles className="h-4 w-4" /> Open full demo
+            </Button>
+            <Button onClick={createNew}><Plus className="h-4 w-4" /> New assignment</Button>
+          </div>
         </div>
         <div className="mt-6 divide-y rounded-lg border bg-card">
           {list === null && <p className="p-4 text-sm text-muted-foreground">Loading…</p>}
