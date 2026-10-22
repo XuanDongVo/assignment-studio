@@ -18,6 +18,8 @@ import { localRepository } from "../save-service";
 import { useBuilder, useIsDirty } from "../store";
 import { useIssues } from "./Canvas";
 import { openTour } from "./Tour";
+import { PublishControl } from "./PublishControl";
+import { statusOf } from "../status";
 
 export function StatusBadge() {
   const dirty = useIsDirty();
@@ -45,6 +47,7 @@ export function Header() {
   const autosave = useBuilder((s) => s.autosave);
   const simulateFailure = useBuilder((s) => s.simulateFailure);
   const status = useBuilder((s) => s.saveStatus);
+  const pubStatus = useBuilder((s) => statusOf(s.assignment));
   const { set, mutate, save, ask } = useBuilder.getState();
   const dirty = useIsDirty();
   const errors = useIssues().filter((i) => i.level === "error").length;
@@ -111,9 +114,10 @@ export function Header() {
         </div>
         <Button variant="ghost" size="sm" onClick={openTour} title="Hướng dẫn sử dụng"><HelpCircle className="h-4 w-4" /> <span className="hidden lg:inline">Hướng dẫn</span></Button>
         <Button variant="ghost" size="icon" aria-label="Settings" onClick={() => set({ settingsOpen: true })}><Settings className="h-4 w-4" /></Button>
-        <Button size="sm" onClick={() => save()} disabled={status === "saving"} title="Save draft (Ctrl+S)">
-          <Save className="h-4 w-4" /> Save Draft
+        <Button size="sm" variant="outline" onClick={() => save()} disabled={status === "saving"} title="Save (Ctrl+S)">
+          <Save className="h-4 w-4" /> <span className="hidden md:inline">{pubStatus === "draft" ? "Save Draft" : "Save"}</span>
         </Button>
+        <PublishControl />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" aria-label="More"><MoreHorizontal className="h-4 w-4" /></Button>
