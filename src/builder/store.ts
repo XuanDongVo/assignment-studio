@@ -3,7 +3,9 @@ import { toast } from "sonner";
 import * as ops from "./ops";
 import { createSeed } from "./seed";
 import { localRepository } from "./save-service";
-import type { Assignment, ID, InsertTarget, Selection, ToolKey } from "./types";
+import { canMoveTo, withStatus } from "./status";
+import { validate } from "./validation";
+import type { Assignment, AssignmentStatus, ID, InsertTarget, Selection, ToolKey } from "./types";
 
 export const snapshotOf = (a: Assignment) => JSON.stringify({ ...a, updatedAt: "" });
 
@@ -37,6 +39,8 @@ interface BuilderState {
   select: (s: Selection) => void;
   set: (p: Partial<BuilderState>) => void;
   save: () => Promise<boolean>;
+  /** Changes Draft / Published / Archived and saves; publishing is blocked while there are errors. */
+  setStatus: (to: AssignmentStatus) => Promise<boolean>;
   addTool: (tool: ToolKey, target?: InsertTarget | null, count?: number) => void;
   requestDeleteItem: (id: ID) => void;
   requestDeleteSection: (id: ID) => void;
@@ -82,6 +86,25 @@ export const useBuilder = create<BuilderState>((set, get) => ({
       set({ saveStatus: "error", saveError: (e as Error).message });
       return false;
     }
+  },
+
+  setStatus: async (to) => {
+    const before = get().assignment;
+    const errors = validate(before).filter((i) => i.level === "error").length;
+    const check = canMoveTo(to, errors);
+    if (!check.ok) {
+      toast.error(check.reason);
+      return false;
+    }
+    set({ assignment: withStatus(before, to) });
+    const ok = await get().save();
+    if (!ok) {
+      set({ assignment: { ...get().assignment, status: before.status, publishedAt: before.publishedAt } });
+      toast.error("Could not change status — please retry");
+      return false;
+    }
+    toast.success(to === "published" ? "Published — students can now see it" : to === "archived" ? "Archived — hidden from students" : "Moved back to draft");
+    return true;
   },
 
   addTool: (tool, target, count = 1) => {

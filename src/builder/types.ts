@@ -118,6 +118,8 @@ export interface AssignmentSettings {
   shuffle: boolean;
 }
 
+export type AssignmentStatus = "draft" | "published" | "archived";
+
 export interface Assignment {
   id: ID;
   title: string;
@@ -127,6 +129,9 @@ export interface Assignment {
   sections: Section[];
   items: Record<ID, Item>;
   updatedAt: string;
+  /** Missing on older saved data = "draft". */
+  status?: AssignmentStatus;
+  publishedAt?: string | null;
 }
 
 export type ToolKey =
