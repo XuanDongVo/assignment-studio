@@ -10,6 +10,7 @@ import type { InsertTarget, ToolKey } from "../types";
 import { Canvas } from "./Canvas";
 import { ConfirmHost } from "./ConfirmHost";
 import { Header } from "./Header";
+import { StatusBanner } from "./PublishControl";
 import { Outline } from "./Outline";
 import { PropertyPanel } from "./PropertyPanel";
 import { SettingsSheet } from "./SettingsSheet";
@@ -150,6 +151,7 @@ export function AssignmentBuilder({ id }: { id?: string }) {
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd}>
       <div className="flex h-screen flex-col overflow-hidden bg-background">
         <Header />
+        <StatusBanner />
         {mode === "preview" ? (
           <div className="min-h-0 flex-1"><StudentPreview /></div>
         ) : (

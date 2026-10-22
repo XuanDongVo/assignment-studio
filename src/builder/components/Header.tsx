@@ -18,6 +18,8 @@ import { localRepository } from "../save-service";
 import { useBuilder, useIsDirty } from "../store";
 import { useIssues } from "./Canvas";
 import { openTour } from "./Tour";
+import { PublishControl } from "./PublishControl";
+import { statusOf } from "../status";
 
 export function StatusBadge() {
   const dirty = useIsDirty();
@@ -35,7 +37,7 @@ export function StatusBadge() {
     );
   if (dirty) return <span className={cn(base, "border-warning/40 bg-warning/10 text-warning-foreground")}><span className="h-1.5 w-1.5 rounded-full bg-warning" /> Unsaved changes</span>;
   if (lastSavedAt) return <span className={cn(base, "border-success/30 bg-success/10 text-success")} title={new Date(lastSavedAt).toLocaleString()}><span className="h-1.5 w-1.5 rounded-full bg-success" /> Saved</span>;
-  return <span className={cn(base, "text-muted-foreground")}>Draft</span>;
+  return <span className={cn(base, "text-muted-foreground")}>Not saved yet</span>;
 }
 
 export function Header() {
@@ -45,6 +47,7 @@ export function Header() {
   const autosave = useBuilder((s) => s.autosave);
   const simulateFailure = useBuilder((s) => s.simulateFailure);
   const status = useBuilder((s) => s.saveStatus);
+  const pubStatus = useBuilder((s) => statusOf(s.assignment));
   const { set, mutate, save, ask } = useBuilder.getState();
   const dirty = useIsDirty();
   const errors = useIssues().filter((i) => i.level === "error").length;
@@ -63,7 +66,7 @@ export function Header() {
   };
 
   const duplicateAssignment = async () => {
-    const copy = { ...structuredClone(a), id: uid("asg"), title: `${a.title} (copy)` };
+    const copy = { ...structuredClone(a), id: uid("asg"), title: `${a.title} (copy)`, status: "draft", publishedAt: null };
     await localRepository.save(copy);
     toast.success("Assignment duplicated — opening the copy");
     navigate({ to: "/", search: { id: copy.id } });
@@ -111,9 +114,10 @@ export function Header() {
         </div>
         <Button variant="ghost" size="sm" onClick={openTour} title="Hướng dẫn sử dụng"><HelpCircle className="h-4 w-4" /> <span className="hidden lg:inline">Hướng dẫn</span></Button>
         <Button variant="ghost" size="icon" aria-label="Settings" onClick={() => set({ settingsOpen: true })}><Settings className="h-4 w-4" /></Button>
-        <Button size="sm" onClick={() => save()} disabled={status === "saving"} title="Save draft (Ctrl+S)">
-          <Save className="h-4 w-4" /> Save Draft
+        <Button size="sm" variant="outline" onClick={() => save()} disabled={status === "saving"} title="Save (Ctrl+S)">
+          <Save className="h-4 w-4" /> <span className="hidden md:inline">{pubStatus === "draft" ? "Save Draft" : "Save"}</span>
         </Button>
+        <PublishControl />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" aria-label="More"><MoreHorizontal className="h-4 w-4" /></Button>
