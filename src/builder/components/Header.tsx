@@ -37,7 +37,7 @@ export function StatusBadge() {
     );
   if (dirty) return <span className={cn(base, "border-warning/40 bg-warning/10 text-warning-foreground")}><span className="h-1.5 w-1.5 rounded-full bg-warning" /> Unsaved changes</span>;
   if (lastSavedAt) return <span className={cn(base, "border-success/30 bg-success/10 text-success")} title={new Date(lastSavedAt).toLocaleString()}><span className="h-1.5 w-1.5 rounded-full bg-success" /> Saved</span>;
-  return <span className={cn(base, "text-muted-foreground")}>Draft</span>;
+  return <span className={cn(base, "text-muted-foreground")}>Not saved yet</span>;
 }
 
 export function Header() {
@@ -66,7 +66,7 @@ export function Header() {
   };
 
   const duplicateAssignment = async () => {
-    const copy = { ...structuredClone(a), id: uid("asg"), title: `${a.title} (copy)` };
+    const copy = { ...structuredClone(a), id: uid("asg"), title: `${a.title} (copy)`, status: "draft", publishedAt: null };
     await localRepository.save(copy);
     toast.success("Assignment duplicated — opening the copy");
     navigate({ to: "/", search: { id: copy.id } });
