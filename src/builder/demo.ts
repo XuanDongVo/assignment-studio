@@ -116,9 +116,12 @@ export function createDemo(id = DEMO_ID): Assignment {
     title: "Demo · All question types & shared content",
     grade: 6,
     instructions: "This demo shows every question type and every shared content block. Answer all the questions.",
-    settings: { timeLimitMin: 40, startAt: "2026-10-22T07:30", dueAt: "2026-10-29T21:00", classIds: ["6A1", "6A2"], showAnswers: "after_submission", showPoints: true, shuffle: false },
+    // Dates and class match the sample results in src/analytics/fake-data.ts.
+    settings: { timeLimitMin: 40, startAt: "2026-10-16T07:30", dueAt: "2026-10-22T21:00", classIds: ["6A1"], showAnswers: "after_submission", showPoints: true, shuffle: false },
     sections: [s1, s2, s3, s4, s5, s6, s7, s8],
     items,
-    updatedAt: "2026-10-21T08:00:00.000Z",
+    updatedAt: "2026-10-16T07:00:00.000Z",
+    status: "published",
+    publishedAt: "2026-10-16T07:30:00.000Z",
   };
 }
