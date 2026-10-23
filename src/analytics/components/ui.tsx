@@ -90,7 +90,7 @@ export function Tag({ children, tone = "warning" }: { children: ReactNode; tone?
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded border px-1.5 text-[11px] font-semibold uppercase tracking-wide",
+        "inline-flex h-5 items-center whitespace-nowrap rounded border px-1.5 text-[11px] font-semibold uppercase tracking-wide",
         tone === "warning" && "border-warning/40 bg-warning/10 text-warning-foreground",
         tone === "destructive" && "border-destructive/30 bg-destructive/5 text-destructive",
         tone === "muted" && "border-border bg-muted text-muted-foreground",

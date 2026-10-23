@@ -22,7 +22,7 @@ export function QuestionPrompt({ q, className }: { q: QuestionStat["q"]; classNa
 }
 
 export function DifficultyTag({ d }: { d: QuestionStat["difficulty"] }) {
-  if (d === "hard") return <Tag tone="destructive">Khó · xem lại</Tag>;
+  if (d === "hard") return <Tag tone="destructive">Khó</Tag>;
   if (d === "easy") return <Tag tone="muted">Quá dễ</Tag>;
   return null;
 }

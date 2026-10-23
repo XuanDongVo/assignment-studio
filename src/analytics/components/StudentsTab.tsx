@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { displayAnswer, displayKey, questionStatus } from "../grading";
 import { durationMin, PROGRESS_LABEL, PROGRESS_ORDER, sectionScoresOf, sectionStats, type ProgressState, type studentRows } from "../metrics";
 import type { Attempt } from "../types";
+import { RichText } from "@/builder/components/RichText";
 import { QuestionPrompt } from "./QuestionsTab";
 import { Card, num, pct, score, StateBadge, StatusChip, Tag, when } from "./ui";
 
@@ -172,11 +173,11 @@ function AttemptSheet({ row, done, mean, onClose }: { row: Row | null; done: Att
                     <div className="mt-2 grid gap-1 pl-1 sm:grid-cols-2">
                       <div>
                         <span className="text-xs text-muted-foreground">Em trả lời: </span>
-                        {ans.length ? ans.map((x, i) => <div key={i} className="font-medium">{x}</div>) : <span className="italic text-muted-foreground">bỏ trống</span>}
+                        {ans.length ? ans.map((x, i) => <div key={i} className="font-medium"><RichText text={x} /></div>) : <span className="italic text-muted-foreground">bỏ trống</span>}
                       </div>
                       <div>
                         <span className="text-xs text-muted-foreground">Đáp án đúng: </span>
-                        {displayKey(q).map((x, i) => <div key={i} className="text-success">{x}</div>)}
+                        {displayKey(q).map((x, i) => <div key={i} className="text-success"><RichText text={x} /></div>)}
                       </div>
                     </div>
                     {submitted && r && r.parts.length > 1 && (
