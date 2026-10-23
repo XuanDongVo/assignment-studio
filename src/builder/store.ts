@@ -99,7 +99,7 @@ export const useBuilder = create<BuilderState>((set, get) => ({
     set({ assignment: withStatus(before, to) });
     const ok = await get().save();
     if (!ok) {
-      set({ assignment: { ...get().assignment, status: before.status, publishedAt: before.publishedAt } });
+      set({ assignment: { ...get().assignment, status: before.status ?? "draft", publishedAt: before.publishedAt ?? null } });
       toast.error("Could not change status — please retry");
       return false;
     }

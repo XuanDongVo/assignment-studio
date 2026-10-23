@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, Plus, Sparkles } from "lucide-react";
+import { BarChart3, FileText, Plus, Sparkles } from "lucide-react";
+import { getResults } from "@/analytics/fake-data";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -78,18 +79,24 @@ function AssignmentsPage() {
           {shown.map((a) => {
             const { total, points } = computeNumbering(a);
             const st = statusOf(a);
+            const hasResults = !!getResults(a.id);
             return (
-              <Link key={a.id} to="/" search={{ id: a.id }} className={cn("flex items-center gap-3 p-4 hover:bg-muted/50", st === "archived" && "opacity-70")}>
-                <FileText className="h-5 w-5 shrink-0 text-primary" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate font-medium">{a.title}</span>
-                    <StatusPill status={st} />
+              <div key={a.id} className={cn("flex items-center gap-3 p-4 hover:bg-muted/50", st === "archived" && "opacity-70")}>
+                <Link to="/" search={{ id: a.id }} className="flex min-w-0 flex-1 items-center gap-3">
+                  <FileText className="h-5 w-5 shrink-0 text-primary" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate font-medium">{a.title}</span>
+                      <StatusPill status={st} />
+                    </div>
+                    <div className="text-xs text-muted-foreground">Grade {a.grade} · {a.sections.length} sections · {total} questions · {points} pts · updated {new Date(a.updatedAt).toLocaleString()}</div>
                   </div>
-                  <div className="text-xs text-muted-foreground">Grade {a.grade} · {a.sections.length} sections · {total} questions · {points} pts · updated {new Date(a.updatedAt).toLocaleString()}</div>
-                </div>
-                <span className="text-sm text-primary">Open</span>
-              </Link>
+                </Link>
+                <Link to="/results" search={{ id: a.id }} className={cn("flex items-center gap-1 rounded-md border px-2 py-1 text-sm", hasResults ? "border-primary/30 text-primary hover:bg-primary/5" : "text-muted-foreground hover:text-foreground")} title={hasResults ? "Có bài nộp (dữ liệu mẫu)" : "Chưa có bài nộp"}>
+                  <BarChart3 className="h-4 w-4" /> Kết quả
+                </Link>
+                <Link to="/" search={{ id: a.id }} className="text-sm text-primary">Open</Link>
+              </div>
             );
           })}
         </div>

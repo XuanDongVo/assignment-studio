@@ -1,6 +1,6 @@
 // @ts-nocheck -- prototype: strict index-access checks relaxed
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Copy, Eye, Loader2, MoreHorizontal, PencilLine, Save, Settings, HelpCircle, Trash2 } from "lucide-react";
+import { ArrowLeft, BarChart3, Copy, Eye, Loader2, MoreHorizontal, PencilLine, Save, Settings, HelpCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,6 +53,18 @@ export function Header() {
   const errors = useIssues().filter((i) => i.level === "error").length;
 
   const leave = () => navigate({ to: "/assignments" });
+  const openResults = () => {
+    const go = () => navigate({ to: "/results", search: { id: a.id } });
+    if (!dirty) return go();
+    ask({
+      title: "Save before opening results?",
+      description: "Your latest edits have not been saved yet.",
+      actions: [
+        { label: "Open without saving", variant: "outline", run: () => (useBuilder.getState().load(useBuilder.getState().assignment), go()) },
+        { label: "Save & open", run: async () => ((await save()) ? go() : toast.error("Save failed — still here")) },
+      ],
+    });
+  };
   const onBack = () => {
     if (!dirty) return leave();
     ask({
@@ -112,6 +124,7 @@ export function Header() {
             <Eye className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Student </span>Preview
           </button>
         </div>
+        <Button variant="ghost" size="sm" onClick={openResults} title="Kết quả bài làm của học sinh"><BarChart3 className="h-4 w-4" /> <span className="hidden lg:inline">Kết quả</span></Button>
         <Button variant="ghost" size="sm" onClick={openTour} title="Hướng dẫn sử dụng"><HelpCircle className="h-4 w-4" /> <span className="hidden lg:inline">Hướng dẫn</span></Button>
         <Button variant="ghost" size="icon" aria-label="Settings" onClick={() => set({ settingsOpen: true })}><Settings className="h-4 w-4" /></Button>
         <Button size="sm" variant="outline" onClick={() => save()} disabled={status === "saving"} title="Save (Ctrl+S)">
