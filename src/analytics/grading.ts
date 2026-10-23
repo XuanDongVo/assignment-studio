@@ -40,6 +40,7 @@ export function snapshotAssignment(a: Assignment): QuestionSnapshot[] {
       sectionId: e.sectionId,
       sectionTitle: sec?.titleEn || "Untitled section",
       groupLabel: grp ? blockLabel(grp) : null,
+      blankRef: c.blankRef ?? null,
       points,
       isExample: it.config.isExample,
       parts: [{ key: "main", label: "", max: points }],

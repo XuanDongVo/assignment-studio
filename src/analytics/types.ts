@@ -36,6 +36,8 @@ export interface QuestionSnapshot {
   sectionTitle: string;
   /** Shared block the question belongs to (passage title, "Answer pool"…), if any. */
   groupLabel: string | null;
+  /** Passage blank number this question answers (cloze), if any. */
+  blankRef?: number | null;
   points: number;
   isExample: boolean;
   options?: { id: ID; letter: string; text: string; isCorrect: boolean }[];

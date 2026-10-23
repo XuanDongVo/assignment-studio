@@ -11,13 +11,9 @@ import { Card, Legend, pct, RateBar, Tag, WithN } from "./ui";
 type Filter = "all" | "hard" | "easy";
 
 export function QuestionPrompt({ q, className }: { q: QuestionStat["q"]; className?: string }) {
-  const text = q.prompt.trim()
-    ? q.prompt
-    : q.options?.length
-      ? q.options.map((o) => o.text).join(" · ")
-      : q.groupLabel
-        ? `Chỗ trống trong “${q.groupLabel}”`
-        : "(không có đề)";
+  const blank = q.blankRef ? `Chỗ trống (${q.blankRef})${q.groupLabel ? ` trong “${q.groupLabel}”` : ""}` : "";
+  const opts = q.options?.map((o) => o.text).join(" · ") ?? "";
+  const text = q.prompt.trim() ? q.prompt : [blank, opts].filter(Boolean).join(": ") || "(không có đề)";
   return <RichText text={text} className={className} renderBlank={(n) => <span className="mx-0.5 font-sans text-xs text-muted-foreground">({n})___</span>} />;
 }
 
