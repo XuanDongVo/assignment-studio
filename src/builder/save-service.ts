@@ -1,6 +1,8 @@
 import type { Assignment, ID } from "./types";
 import { createSeed } from "./seed";
 import { createDemo, DEMO_ID } from "./demo";
+import { startedCount } from "@/attempts/db";
+import { contentChangeBlocked } from "@/attempts/rules";
 
 export interface AssignmentRepository {
   list(): Promise<Assignment[]>;
@@ -36,9 +38,15 @@ function readAll(): Record<ID, Assignment> {
 }
 const writeAll = (all: Record<ID, Assignment>) => localStorage.setItem(KEY, JSON.stringify(all));
 
+/** Synchronous reads for the (simulated) attempt server. */
+export const readAssignment = (id: ID): Assignment | null => readAll()[id] ?? null;
+export const readAssignments = (): Assignment[] => Object.values(readAll());
+
 /** Re-creates the showcase demo with its original content and returns its id. */
 export async function resetDemo(): Promise<ID> {
   const all = readAll();
+  // Students already started the demo: keep its content (locked), only re-add it if it was deleted.
+  if (all[DEMO_ID] && startedCount(DEMO_ID) > 0) return DEMO_ID;
   all[DEMO_ID] = { ...createDemo(), updatedAt: new Date().toISOString() };
   writeAll(all);
   return DEMO_ID;
@@ -56,6 +64,9 @@ export const localRepository: AssignmentRepository = {
     await delay(600);
     if (opts?.simulateFailure) throw new Error("Network error (simulated). Your changes are still here.");
     const all = readAll();
+    // Server rule: once a student has started, the question content cannot change.
+    const blocked = contentChangeBlocked(all[a.id] ?? null, a, startedCount(a.id));
+    if (blocked) throw new Error(blocked);
     const saved = { ...a, updatedAt: new Date().toISOString() };
     all[a.id] = saved;
     writeAll(all);
@@ -63,6 +74,7 @@ export const localRepository: AssignmentRepository = {
   },
   async remove(id) {
     await delay(300);
+    if (startedCount(id) > 0) throw new Error("Đã có học sinh làm bài này nên không thể xóa (sẽ mất bài làm). Hãy lưu trữ (Archive) thay vì xóa.");
     const all = readAll();
     delete all[id];
     writeAll(all);

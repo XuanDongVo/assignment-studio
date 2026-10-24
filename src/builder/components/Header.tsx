@@ -92,7 +92,12 @@ export function Header() {
           label: "Delete assignment",
           variant: "destructive",
           run: async () => {
-            await localRepository.remove(a.id);
+            try {
+              await localRepository.remove(a.id);
+            } catch (e) {
+              toast.error((e as Error).message);
+              return;
+            }
             useBuilder.getState().load(a); // clear dirty state so leaving is not blocked
             toast("Assignment deleted");
             leave();
