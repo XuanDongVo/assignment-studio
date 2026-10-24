@@ -9,7 +9,7 @@ import { advanceServerClock, currentStudentId, getNet, resetAttemptForTesting, r
 const serverSnapshot = () => '{"offline":false,"dropNextResponse":false,"failNextGrading":false}';
 
 /** Prototype-only switches to try the hard cases (offline, lost reply, grading crash, time-out). */
-export function TestTools({ assignmentId, onChanged }: { assignmentId?: string; onChanged?: () => void }) {
+export function TestTools({ assignmentId, onClock, onReset }: { assignmentId?: string; onClock?: () => void; onReset?: () => void }) {
   const raw = useSyncExternalStore(subscribeNet, () => JSON.stringify(getNet()), serverSnapshot);
   const net = JSON.parse(raw) as ReturnType<typeof getNet>;
   return (
@@ -34,8 +34,8 @@ export function TestTools({ assignmentId, onChanged }: { assignmentId?: string; 
           <Button size="sm" variant="secondary" disabled={net.failNextGrading} onClick={() => setNet({ failNextGrading: true })}>
             {net.failNextGrading ? "Đã bật: lỗi chấm điểm lần tới" : "Lỗi khi chấm điểm (1 lần)"}
           </Button>
-          <Button size="sm" variant="secondary" onClick={() => (advanceServerClock(5), toast("Đồng hồ máy chủ +5 phút"), onChanged?.())}>Tua đồng hồ máy chủ +5 phút</Button>
-          <Button size="sm" variant="ghost" onClick={() => (resetServerClock(), toast("Đồng hồ máy chủ về giờ thật"), onChanged?.())}>Đặt lại đồng hồ</Button>
+          <Button size="sm" variant="secondary" onClick={() => (advanceServerClock(5), toast("Đồng hồ máy chủ +5 phút"), onClock?.())}>Tua đồng hồ máy chủ +5 phút</Button>
+          <Button size="sm" variant="ghost" onClick={() => (resetServerClock(), toast("Đồng hồ máy chủ về giờ thật"), onClock?.())}>Đặt lại đồng hồ</Button>
           {assignmentId && (
             <Button
               size="sm"
@@ -46,7 +46,7 @@ export function TestTools({ assignmentId, onChanged }: { assignmentId?: string; 
                 if (!sid) return;
                 resetAttemptForTesting(assignmentId, sid);
                 toast("Đã xoá lượt làm của học sinh này");
-                onChanged?.();
+                onReset?.();
               }}
             >
               Xoá lượt làm để thử lại từ đầu
