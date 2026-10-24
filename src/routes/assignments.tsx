@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BarChart3, FileText, Plus, Sparkles } from "lucide-react";
+import { BarChart3, FileText, GraduationCap, Plus, Sparkles } from "lucide-react";
 import { getResults } from "@/analytics/fake-data";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,9 @@ function AssignmentsPage() {
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-2xl font-semibold">My assignments</h1>
           <div className="flex gap-2">
+            <Button variant="ghost" asChild title="Thử làm bài như một học sinh">
+              <Link to="/student"><GraduationCap className="h-4 w-4" /> Xem như học sinh</Link>
+            </Button>
             <Button variant="outline" onClick={openDemo} title="Opens a fresh copy of the demo with every question type and shared block">
               <Sparkles className="h-4 w-4" /> Open full demo
             </Button>
