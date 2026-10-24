@@ -45,6 +45,8 @@ export const readAssignments = (): Assignment[] => Object.values(readAll());
 /** Re-creates the showcase demo with its original content and returns its id. */
 export async function resetDemo(): Promise<ID> {
   const all = readAll();
+  // Students already started the demo: keep its content (locked), only re-add it if it was deleted.
+  if (all[DEMO_ID] && startedCount(DEMO_ID) > 0) return DEMO_ID;
   all[DEMO_ID] = { ...createDemo(), updatedAt: new Date().toISOString() };
   writeAll(all);
   return DEMO_ID;

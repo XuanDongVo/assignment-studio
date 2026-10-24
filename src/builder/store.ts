@@ -5,6 +5,8 @@ import { createSeed } from "./seed";
 import { localRepository } from "./save-service";
 import { canMoveTo, withStatus } from "./status";
 import { validate } from "./validation";
+import { startedCount } from "@/attempts/db";
+import { contentKey } from "@/attempts/rules";
 import type { Assignment, AssignmentStatus, ID, InsertTarget, Selection, ToolKey } from "./types";
 
 export const snapshotOf = (a: Assignment) => JSON.stringify({ ...a, updatedAt: "" });
@@ -33,6 +35,9 @@ interface BuilderState {
   simulateFailure: boolean;
   confirm: ConfirmState | null;
   settingsOpen: boolean;
+  /** Students who have started this assignment; > 0 freezes question content. */
+  startedCount: number;
+  refreshLock: () => void;
 
   load: (a: Assignment) => void;
   mutate: (fn: (draft: Assignment) => void) => void;
@@ -63,11 +68,18 @@ export const useBuilder = create<BuilderState>((set, get) => ({
   simulateFailure: false,
   confirm: null,
   settingsOpen: false,
+  startedCount: 0,
+  refreshLock: () => set({ startedCount: startedCount(get().assignment.id) }),
 
-  load: (a) => set({ assignment: a, savedSnapshot: snapshotOf(a), loaded: true, selection: null, saveStatus: "idle", lastSavedAt: a.updatedAt }),
+  load: (a) => set({ startedCount: startedCount(a.id), assignment: a, savedSnapshot: snapshotOf(a), loaded: true, selection: null, saveStatus: "idle", lastSavedAt: a.updatedAt }),
   mutate: (fn) => {
-    const draft = structuredClone(get().assignment);
+    const cur = get().assignment;
+    const draft = structuredClone(cur);
     fn(draft);
+    if (get().startedCount > 0 && contentKey(draft) !== contentKey(cur)) {
+      toast.error("Nội dung đề đã bị khóa vì học sinh đã bắt đầu làm bài. Hãy nhân bản bài để sửa.", { id: "content-locked" });
+      return;
+    }
     set({ assignment: draft });
   },
   select: (selection) => set({ selection }),
