@@ -11,6 +11,7 @@ import { Canvas } from "./Canvas";
 import { ConfirmHost } from "./ConfirmHost";
 import { Header } from "./Header";
 import { StatusBanner } from "./PublishControl";
+import { ContentLockBanner } from "./ContentLockBanner";
 import { Outline } from "./Outline";
 import { PropertyPanel } from "./PropertyPanel";
 import { SettingsSheet } from "./SettingsSheet";
@@ -152,6 +153,7 @@ export function AssignmentBuilder({ id }: { id?: string }) {
       <div className="flex h-screen flex-col overflow-hidden bg-background">
         <Header />
         <StatusBanner />
+        <ContentLockBanner />
         {mode === "preview" ? (
           <div className="min-h-0 flex-1"><StudentPreview /></div>
         ) : (
