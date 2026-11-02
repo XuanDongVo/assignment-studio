@@ -119,12 +119,32 @@ export interface OpenResult {
   serverNow: string;
 }
 
+export type ReviewStatus = "CORRECT" | "PARTIAL" | "INCORRECT" | "UNANSWERED" | "PENDING";
+
+/** One graded part (the whole question, or one blank). */
+export interface ReviewPart {
+  key: string;
+  label: string;
+  status: ReviewStatus;
+  earned: number;
+  max: number;
+}
+
+/**
+ * Per-question review, sent only when the teacher's "show answers" setting allows it.
+ * `key` lets the paper mark the right option / letter / text in place.
+ */
 export interface ReviewItem {
   questionId: ID;
   number: number | null;
-  status: "CORRECT" | "PARTIAL" | "INCORRECT" | "UNANSWERED" | "PENDING";
+  sectionId: ID;
+  status: ReviewStatus;
+  earned: number;
+  max: number;
+  parts: ReviewPart[];
   yourAnswer: string[];
   correct: string[];
+  key: { optionIds?: ID[]; entryId?: ID | null; accepted?: string[]; blanks?: string[][] };
 }
 
 export interface ResultData {

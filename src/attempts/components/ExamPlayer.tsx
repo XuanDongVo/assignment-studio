@@ -367,7 +367,7 @@ export function ExamPlayer({ assignmentId }: { assignmentId: string }) {
       {phase === "intro" && <Intro />}
       {phase === "elsewhere" && <Elsewhere />}
       {phase === "active" && attempt && <Active />}
-      {phase === "finished" && attempt && <div className="min-h-screen bg-muted/40"><ResultView attempt={attempt} result={result} /></div>}
+      {phase === "finished" && attempt && <ResultView attempt={attempt} result={result} />}
       <TestTools
         assignmentId={assignmentId}
         onClock={() => (usePlayer.getState().phase === "active" ? void usePlayer.getState().checkTime() : void init(assignmentId))}
