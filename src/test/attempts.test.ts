@@ -266,6 +266,21 @@ describe("answer key", () => {
     expect(r.data.review).toBe(null);
   });
 
+  it("result review marks each question with its points and the correct option when allowed", () => {
+    const att = startAnna();
+    const q = single();
+    save(att, wrong(q), { q });
+    server().submit(ANNA, { attemptId: att.id, sessionId: "tabA", requestId: "s" });
+    const r = server().result(ANNA, att.id);
+    const item = r.data.review.find((x) => x.questionId === q.questionId);
+    expect(item.status).toBe("INCORRECT");
+    expect(item.earned).toBe(0);
+    expect(item.max).toBe(q.points);
+    expect(item.sectionId).toBe(q.sectionId);
+    expect(item.key.optionIds).toEqual([right(q)]);
+    expect(r.data.review.filter((x) => x.questionId !== q.questionId).every((x) => x.status === "UNANSWERED")).toBe(true);
+  });
+
   it("result is refused before the attempt is finished", () => {
     const att = startAnna();
     expect(server().result(ANNA, att.id).code).toBe("NOT_FINISHED");
