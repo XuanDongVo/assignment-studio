@@ -112,7 +112,7 @@ function QuestionView({ q, answers, setAnswer, showPoints, disabled }: { q: SQue
   );
 }
 
-function BlockView({ b }: { b: SBlock }) {
+export function BlockView({ b }: { b: SBlock }) {
   if (b.type === "INSTRUCTIONS") return <p className="italic text-muted-foreground">{b.text}</p>;
   if (b.type === "MEDIA")
     return b.url ? (

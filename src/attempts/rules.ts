@@ -377,15 +377,30 @@ export function createAttemptServer(db: ServerDB, deps: ServerDeps) {
       if (allowed) {
         review = att.questions
           .filter((q) => !q.isExample)
-          .map((q) => {
+          .map((q): ReviewItem => {
             const r = att.responses?.find((x) => x.questionId === q.questionId);
             const pending = att.manualPending.includes(q.questionId);
+            const graded = r?.parts ?? [];
+            const parts = q.parts.map((p) => {
+              const g = graded.find((x) => x.key === p.key);
+              return { key: p.key, label: p.label, status: pending ? "PENDING" : (g?.status ?? "UNANSWERED"), earned: g?.earned ?? 0, max: p.max } as const;
+            });
             return {
               questionId: q.questionId,
               number: q.number,
-              status: pending ? "PENDING" : questionStatus(r?.parts ?? []),
+              sectionId: q.sectionId,
+              status: pending ? "PENDING" : questionStatus(graded),
+              earned: round2(graded.reduce((s, p) => s + p.earned, 0)),
+              max: q.points,
+              parts,
               yourAnswer: displayAnswer(q, r?.raw ?? null),
               correct: displayKey(q),
+              key: {
+                optionIds: q.options?.filter((o) => o.isCorrect).map((o) => o.id),
+                entryId: q.type === "MATCHING" ? (q.correctEntryId ?? null) : undefined,
+                accepted: q.type === "TEXT_INPUT" ? [...(q.acceptedAnswers ?? [])] : undefined,
+                blanks: q.blanks?.map((b) => [...b.acceptedAnswers]),
+              },
             };
           });
       }
