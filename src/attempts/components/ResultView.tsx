@@ -202,7 +202,7 @@ function ReviewQuestion({ q, raw, r, reveal }: { q: SQuestion; raw: RawAnswer; r
 
       {reveal && r && st !== "CORRECT" && st !== "PENDING" && (
         <>
-          {q.type === "TEXT_INPUT" && <KeyLine>{(r.key.accepted ?? []).join("  /  ") || "—"}</KeyLine>}
+          {q.type === "TEXT_INPUT" && (r.key.accepted?.length ?? 0) > 0 && <KeyLine>{r.key.accepted!.join("  /  ")}</KeyLine>}
           {q.type === "MATCHING" && (
             <KeyLine>
               {(() => {
@@ -239,7 +239,7 @@ function ReviewQuestion({ q, raw, r, reveal }: { q: SQuestion; raw: RawAnswer; r
 
 /* ---------- navigator ---------- */
 
-function Navigator({ questions, cellState, onGo }: { questions: SQuestion[]; cellState: (q: SQuestion) => ReviewStatus | "ANSWERED"; onGo: (id: string) => void }) {
+function Navigator({ questions, cellState, onGo, children }: { questions: SQuestion[]; cellState: (q: SQuestion) => ReviewStatus | "ANSWERED"; onGo: (id: string) => void; children?: ReactNode }) {
   return (
     <div className="rounded-lg border bg-card p-4">
       <div className="text-sm font-semibold">Danh sách câu</div>
@@ -259,6 +259,7 @@ function Navigator({ questions, cellState, onGo }: { questions: SQuestion[]; cel
           );
         })}
       </div>
+      {children}
     </div>
   );
 }
@@ -306,9 +307,8 @@ export function ResultView({ attempt, result }: { attempt: ClientAttempt; result
     } else scroll();
   };
 
-  const nav = <Navigator questions={questions} cellState={cellState} onGo={goTo} />;
   const legend = (
-    <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
+    <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-1.5 border-t pt-3 text-xs text-muted-foreground">
       {(reveal ? (["CORRECT", "PARTIAL", "INCORRECT", "UNANSWERED"] as ReviewStatus[]) : []).map((s) => (
         <span key={s} className="flex items-center gap-1.5"><span className={cn("h-3 w-3 rounded-sm border", STATUS[s].cell)} /> {STATUS[s].label}</span>
       ))}
@@ -320,6 +320,7 @@ export function ResultView({ attempt, result }: { attempt: ClientAttempt; result
       )}
     </div>
   );
+  const nav = <Navigator questions={questions} cellState={cellState} onGo={goTo}>{legend}</Navigator>;
 
   return (
     <div className="min-h-screen bg-muted/40">
@@ -403,7 +404,7 @@ export function ResultView({ attempt, result }: { attempt: ClientAttempt; result
                 {sectionStats.map((s) => {
                   const p = s.max ? Math.round((s.earned / s.max) * 100) : 0;
                   return (
-                    <li key={s.id} className="grid grid-cols-1 items-center gap-2 py-2.5 sm:grid-cols-[minmax(0,1fr)_10rem_7rem]">
+                    <li key={s.id} className="grid grid-cols-1 items-center gap-2 py-2.5 sm:grid-cols-[minmax(0,1fr)_9rem_9.5rem]">
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium">{s.titleEn}</div>
                         {s.titleVi && <div className="truncate text-xs text-muted-foreground">{s.titleVi}</div>}
@@ -421,7 +422,6 @@ export function ResultView({ attempt, result }: { attempt: ClientAttempt; result
 
           <div className="lg:hidden">
             {nav}
-            {legend}
           </div>
 
           {/* Review paper */}
@@ -485,7 +485,6 @@ export function ResultView({ attempt, result }: { attempt: ClientAttempt; result
         <aside className="hidden lg:block">
           <div className="sticky top-20">
             {nav}
-            {legend}
           </div>
         </aside>
       </main>
