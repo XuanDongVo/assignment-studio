@@ -18,6 +18,7 @@ import { SettingsSheet } from "./SettingsSheet";
 import { Tour } from "./Tour";
 import { StudentPreview } from "./StudentPreview";
 import { TOOLS, Toolbox } from "./Toolbox";
+import { SharedContentGuide } from "./SharedContentGuide";
 import { ValidationPanel } from "./ValidationPanel";
 
 function useWide() {
@@ -202,6 +203,7 @@ export function AssignmentBuilder({ id }: { id?: string }) {
       <SettingsSheet />
       <ConfirmHost />
       <Tour />
+      <SharedContentGuide />
     </DndContext>
   );
 }

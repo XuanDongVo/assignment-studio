@@ -166,3 +166,12 @@
   --font-serif: "Source Serif 4", Georgia, serif;
 }
 body { font-family: var(--font-sans); }
+.guide-spotlight { outline: 2px solid var(--primary); outline-offset: 4px; border-radius: 6px; }
+@keyframes guide-drag {
+  0% { transform: translate(0, 0); opacity: 0; }
+  15% { transform: translate(0, 0); opacity: 1; }
+  80% { transform: translate(220px, 100px); opacity: 1; }
+  100% { transform: translate(220px, 100px); opacity: 0; }
+}
+.guide-drag-demo { animation: guide-drag 2.4s ease-in-out 2; }
+@media (prefers-reduced-motion: reduce) { .guide-drag-demo { animation: none; } }

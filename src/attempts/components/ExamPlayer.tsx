@@ -10,6 +10,7 @@ import { isAnswered, scorableQuestions, StudentPaper } from "@/builder/component
 import { overallSync, usePlayer } from "../player";
 import { ResultView } from "./ResultView";
 import { TestTools } from "./TestTools";
+import { useLeaveGuard } from "../use-leave-guard";
 
 const fmtWhen = (s: string) => new Date(s).toLocaleString("vi-VN", { dateStyle: "short", timeStyle: "short" });
 
@@ -30,53 +31,6 @@ function useRemaining(expiresAt: string | null | undefined, offset: number) {
   }, []);
   if (!expiresAt) return null;
   return Math.max(0, Math.floor((new Date(expiresAt).getTime() - (now + offset)) / 1000));
-}
-
-/**
- * Full screen is required while working. Leaving it, switching tab or window covers the paper,
- * locks the answers and counts a warning. Browsers cannot stop a student from switching, only detect it.
- */
-function useLeaveGuard(enabled: boolean, attemptId: string | undefined) {
-  const [away, setAway] = useState(false);
-  const key = `ab.leaves.${attemptId}`;
-  const [count, setCount] = useState(0);
-  const prev = useRef(false);
-  useEffect(() => {
-    setCount(Number(sessionStorage.getItem(key) || 0));
-  }, [key]);
-  useEffect(() => {
-    if (!enabled) {
-      setAway(false);
-      prev.current = false;
-      return;
-    }
-    const fsRequired = document.fullscreenEnabled;
-    const check = () => {
-      const a = (fsRequired && !document.fullscreenElement) || document.hidden || !document.hasFocus();
-      if (a && !prev.current) {
-        const n = Number(sessionStorage.getItem(key) || 0) + 1;
-        sessionStorage.setItem(key, String(n));
-        setCount(n);
-      }
-      prev.current = a;
-      setAway(a);
-    };
-    const t = setTimeout(check, 900); // give the browser time to enter full screen
-    const evs = ["fullscreenchange", "visibilitychange"] as const;
-    evs.forEach((e) => document.addEventListener(e, check));
-    window.addEventListener("blur", check);
-    window.addEventListener("focus", check);
-    const block = (e: Event) => e.preventDefault();
-    document.addEventListener("contextmenu", block);
-    return () => {
-      clearTimeout(t);
-      evs.forEach((e) => document.removeEventListener(e, check));
-      window.removeEventListener("blur", check);
-      window.removeEventListener("focus", check);
-      document.removeEventListener("contextmenu", block);
-    };
-  }, [enabled, key]);
-  return { away, count };
 }
 
 function SyncBadge() {
@@ -187,7 +141,7 @@ function Active() {
   const { attempt, values, setAnswer, clockOffset, submit, submitting, message, flush, checkTime, sync } = usePlayer();
   const seconds = useRemaining(attempt.expiresAt, clockOffset);
   const timeUp = seconds === 0;
-  const { away, count } = useLeaveGuard(!timeUp && !attempt.finalizing, attempt.id);
+  const { away, count, acknowledge } = useLeaveGuard(!timeUp && !attempt.finalizing, attempt.id);
   const [step, setStep] = useState<SubmitStep>("closed");
   const [unsynced, setUnsynced] = useState(0);
   const qs = useMemo(() => scorableQuestions(attempt.view), [attempt.view]);
@@ -248,8 +202,8 @@ function Active() {
             <Lock className="mx-auto h-8 w-8 text-destructive" />
             <h2 id="away-title" className="mt-2 text-lg font-semibold">Bạn đã rời khỏi màn hình làm bài</h2>
             <p className="mt-1 text-sm font-medium text-destructive">Cảnh cáo lần {Math.max(count, 1)}</p>
-            <p className="mt-2 text-sm text-muted-foreground">Không được chuyển tab, mở cửa sổ khác hoặc thoát toàn màn hình khi đang làm bài. Bài làm bị khóa cho đến khi bạn quay lại. Đồng hồ vẫn tiếp tục chạy.</p>
-            <Button className="mt-4" onClick={enterFullscreen}><Maximize className="h-4 w-4" /> Quay lại làm bài</Button>
+            <p className="mt-2 text-sm text-muted-foreground">Không được chuyển tab, mở cửa sổ khác hoặc thoát toàn màn hình khi đang làm bài. Cảnh báo giữ nguyên cho đến khi bạn bấm nút bên dưới để đóng và quay lại toàn màn hình. Đồng hồ vẫn tiếp tục chạy.</p>
+            <Button className="mt-4" onClick={acknowledge}><Maximize className="h-4 w-4" /> Đóng cảnh báo & tiếp tục</Button>
           </div>
         </div>
       )}

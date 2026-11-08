@@ -16,6 +16,8 @@ import {
 import { useBuilder } from "../store";
 import type { ToolKey } from "../types";
 import { BatchAdd } from "./BatchAdd";
+import { Button } from "@/components/ui/button";
+import { openSharedGuide } from "./SharedContentGuide";
 
 export const TOOLS: { key: ToolKey; label: string; desc: string; icon: LucideIcon; group: string }[] = [
   { key: "SINGLE_CHOICE", label: "Single choice", desc: "One correct option (A–D)", icon: CircleDot, group: "Questions" },
@@ -63,6 +65,7 @@ export function Toolbox() {
       {groups.map((g) => (
         <div key={g} data-tour={g === "Structure" ? "toolbox-structure" : g === "Shared content" ? "toolbox-shared" : undefined}>
           <div className="mb-1 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{g}</div>
+          {g === "Shared content" && <Button className="mb-2 h-auto w-full justify-start whitespace-normal py-2 text-left" onClick={() => openSharedGuide()}><BookOpen className="h-4 w-4 shrink-0" /> Hướng dẫn Shared Content</Button>}
           <div className="space-y-0.5">
             {TOOLS.filter((t) => t.group === g).map((t) => (
               <ToolButton key={t.key} t={t} />

@@ -24,6 +24,7 @@ import { validate } from "../validation";
 import { BlankChip, RichText } from "./RichText";
 import { TOOLS } from "./Toolbox";
 import { BatchAdd } from "./BatchAdd";
+import { openSharedGuide } from "./SharedContentGuide";
 
 const QUESTION_TOOL_DEFS = TOOLS.filter((t) => ops.isQuestionTool(t.key));
 
@@ -328,6 +329,7 @@ function GroupCard({ b }: { b: BlockItem }) {
         <span className="truncate">
           {label} · {b.memberIds.length} question{b.memberIds.length === 1 ? "" : "s"}
         </span>
+        <Button size="sm" variant="outline" className="ml-auto h-auto shrink-0 py-1 text-xs" onClick={(e) => { e.stopPropagation(); openSharedGuide(b.block.type); }}>Hướng dẫn nhóm</Button>
       </div>
       <BlockBody b={b} />
       <div ref={setNodeRef} className={cn("mt-3 space-y-2 border-l-2 pl-3", isOver ? "border-primary" : "border-primary/20")}>
