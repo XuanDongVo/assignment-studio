@@ -11,6 +11,7 @@
 
 ## Project rules
 - Shared Content tutorials use an isolated in-memory practice assignment and the builder's existing operations; never swap the live store or persist practice, so autosave and content locks remain untouched.
+- Shared Content sample actions and answer-readiness checks live in shared-guide.ts; the walkthrough previews through buildStudentView and StudentPaper so editor keys stay out of the student rendering.
 - Student leave warnings use a memory-only latched hook; only explicit acknowledgement after safe fullscreen/focus recovery unlocks the paper.
 - Showcase content lives in `src/builder/demo.ts` (deterministic ids) and is added to local storage once by the save service; `src/test/demo.test.ts` keeps it covering every question type and shared block with zero validation errors — update both when adding a new type.
 - Assignment status (draft/published/archived) rules live in `src/builder/status.ts` and are covered by `src/test/status.test.ts`; missing status on stored data means draft, so old saves keep working.

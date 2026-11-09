@@ -64,9 +64,16 @@ export function Tour() {
 
   useEffect(() => {
     window.addEventListener("ab:tour", start);
-    if (!localStorage.getItem(SEEN_KEY)) setTimeout(start, 800);
-    return () => window.removeEventListener("ab:tour", start);
-  }, [start]);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (!localStorage.getItem(SEEN_KEY)) timer = setTimeout(start, 800);
+    const openPractice = () => { clearTimeout(timer); close(); };
+    window.addEventListener("ab:shared-guide", openPractice);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("ab:tour", start);
+      window.removeEventListener("ab:shared-guide", openPractice);
+    };
+  }, [start, close]);
 
   useLayoutEffect(() => {
     if (step === null) return;
